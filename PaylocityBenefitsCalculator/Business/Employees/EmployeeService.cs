@@ -11,7 +11,7 @@ internal sealed class EmployeeService : IEmployeeService
 
     public Task DeleteAsync() => _repo.DeleteAsync();
 
-    public Task GetAsync(uint id) => _repo.GetAsync(id);
+    public Task<Employee> GetAsync(uint id) => _repo.GetAsync(id);
 
     public Task GetAsync() => _repo.GetAsync();
 

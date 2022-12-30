@@ -1,3 +1,4 @@
+using AutoMapper;
 using Dapper;
 using Business.Employees;
 using Data.Client;
@@ -7,10 +8,19 @@ namespace Data.Employees;
 internal sealed class EmployeeRepository : IEmployeeRepository
 {
     private readonly IDatabaseClient _client;
+    private readonly IMapper _mapper;
 
-    public EmployeeRepository(IDatabaseClient client)
+    private const string SELECT_EMPLOYEES_BY_ID = @"
+        SELECT id, first_name, last_name, date_of_birth, salary
+        FROM employees
+        WHERE id=@Id;";
+
+    public EmployeeRepository(
+        IDatabaseClient client,
+        IMapper mapper)
     {
         _client = client;
+        _mapper = mapper;
     }
 
     public Task DeleteAsync()
@@ -18,11 +28,13 @@ internal sealed class EmployeeRepository : IEmployeeRepository
         throw new NotImplementedException();
     }
 
-    public async Task GetAsync(uint id)
+    public async Task<Employee> GetAsync(uint id)
     {
-        var result = await _client.WithConnectionAsync(
-            c => c.QueryFirstOrDefaultAsync<int>("SELECT 1"),
+        var employee = await _client.WithConnectionAsync(
+            c => c.QueryFirstOrDefaultAsync<EmployeeEntity>(SELECT_EMPLOYEES_BY_ID, new { Id = id }),
             Constants.BENEFITS_CONNECTION);
+
+        return _mapper.Map<Employee>(employee);
     }
 
     public Task GetAsync()

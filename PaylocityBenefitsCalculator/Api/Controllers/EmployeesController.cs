@@ -22,9 +22,19 @@ namespace Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(uint id)
         {
-            await _employeeService.GetAsync(id);
+            var employee = await _employeeService.GetAsync(id);
 
-            return Ok(new ApiResponse<GetEmployeeDto>());
+            return Ok(new ApiResponse<GetEmployeeDto>
+            {
+                Data = new GetEmployeeDto
+                {
+                    FirstName = employee.FirstName,
+                    LastName = employee.LastName,
+                    DateOfBirth = employee.DateOfBirth,
+                    Id = employee.Id,
+                    Salary = employee.Salary
+                }
+            });
         }
 
         [SwaggerOperation(Summary = "Get all employees")]
