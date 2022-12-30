@@ -1,8 +1,9 @@
-﻿using Api.Dtos.Dependent;
-using Api.Dtos.Employee;
+﻿using Api.Models.Dependents;
+using Api.Models.Employees;
 using Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Business.Employees;
 
 namespace Api.Controllers
 {
@@ -10,17 +11,27 @@ namespace Api.Controllers
     [Route("api/v1/[controller]")]
     public class EmployeesController : ControllerBase
     {
+        private readonly IEmployeeService _employeeService;
+
+        public EmployeesController(IEmployeeService employeeService)
+        {
+            _employeeService = employeeService;
+        }
+
         [SwaggerOperation(Summary = "Get employee by id")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(int id)
+        public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(uint id)
         {
-            throw new NotImplementedException();
+            await _employeeService.GetAsync(id);
+
+            return Ok(new ApiResponse<GetEmployeeDto>());
         }
 
         [SwaggerOperation(Summary = "Get all employees")]
         [HttpGet("")]
         public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> GetAll()
         {
+            await _employeeService.GetAsync();
             //task: use a more realistic production approach
             var employees = new List<GetEmployeeDto>
             {
@@ -46,7 +57,7 @@ namespace Api.Controllers
                             Id = 1,
                             FirstName = "Spouse",
                             LastName = "Morant",
-                            Relationship = Relationship.Spouse,
+                            Relationship = "Spouse",
                             DateOfBirth = new DateTime(1998, 3, 3)
                         },
                         new()
@@ -54,7 +65,7 @@ namespace Api.Controllers
                             Id = 2,
                             FirstName = "Child1",
                             LastName = "Morant",
-                            Relationship = Relationship.Child,
+                            Relationship = "Child",
                             DateOfBirth = new DateTime(2020, 6, 23)
                         },
                         new()
@@ -62,7 +73,7 @@ namespace Api.Controllers
                             Id = 3,
                             FirstName = "Child2",
                             LastName = "Morant",
-                            Relationship = Relationship.Child,
+                            Relationship = "Child",
                             DateOfBirth = new DateTime(2021, 5, 18)
                         }
                     }
@@ -81,41 +92,47 @@ namespace Api.Controllers
                             Id = 4,
                             FirstName = "DP",
                             LastName = "Jordan",
-                            Relationship = Relationship.DomesticPartner,
+                            Relationship = "DomesticPartner",
                             DateOfBirth = new DateTime(1974, 1, 2)
                         }
                     }
                 }
             };
-            
+
             var result = new ApiResponse<List<GetEmployeeDto>>
             {
                 Data = employees,
                 Success = true
             };
-            
+
             return result;
         }
 
         [SwaggerOperation(Summary = "Add employee")]
         [HttpPost]
         public async Task<ActionResult<ApiResponse<List<AddEmployeeDto>>>> AddEmployee(AddEmployeeDto newEmployee)
-        { 
-            throw new NotImplementedException();
+        {
+            await _employeeService.UpsertAsync();
+
+            return Ok(new ApiResponse<List<AddEmployeeDto>>());
         }
 
         [SwaggerOperation(Summary = "Update employee")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> UpdateEmployee(int id, UpdateEmployeeDto updatedEmployee)
         {
-            throw new NotImplementedException();
+            await _employeeService.UpsertAsync();
+
+            return Ok(new ApiResponse<GetEmployeeDto>());
         }
 
         [SwaggerOperation(Summary = "Delete employee")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> DeleteEmployee(int id)
         {
-            throw new NotImplementedException();
+            await _employeeService.DeleteAsync();
+
+            return Ok(new ApiResponse<List<GetEmployeeDto>>());
         }
     }
 }
