@@ -2,6 +2,6 @@
 {
     public class AddDependentWithEmployeeIdDto : AddDependentDto
     {
-        public int EmployeeId { get; set; }
+        public uint EmployeeId { get; set; }
     }
 }

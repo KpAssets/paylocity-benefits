@@ -3,6 +3,7 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using Business.Employees;
 using Data.Client;
+using Data.Dependents;
 
 namespace Data.Employees;
 
@@ -11,20 +12,44 @@ internal sealed class EmployeeRepository : IEmployeeRepository
     private readonly IDatabaseClient _client;
     private readonly IMapper _mapper;
 
+    #region Queries
     private const string SELECT_ALL_EMPLOYEES = @"
-        SELECT id, first_name, last_name, date_of_birth, salary
-        FROM employees;
+        SELECT
+            ee.id,
+            ee.first_name,
+            ee.last_name,
+            ee.date_of_birth,
+            ee.salary,
+            dep.id,
+            dep.first_name,
+            dep.last_name,
+            dep.date_of_birth,
+            dep.relationship
+        FROM employees AS ee
+        LEFT JOIN dependents AS dep ON dep.employees_id = ee.id;
     ";
 
     private const string SELECT_EMPLOYEES_BY_ID = @"
-        SELECT id, first_name, last_name, date_of_birth, salary
-        FROM employees
-        WHERE id=@Id;
+        SELECT
+            ee.id,
+            ee.first_name,
+            ee.last_name,
+            ee.date_of_birth,
+            ee.salary,
+            dep.id,
+            dep.first_name,
+            dep.last_name,
+            dep.date_of_birth,
+            dep.relationship
+        FROM employees AS ee
+        LEFT JOIN dependents AS dep ON dep.employees_id = ee.id
+        WHERE ee.id=@Id;
     ";
 
     private const string DELETE_EMPLOYEE_BY_ID = @"
         DELETE FROM employee WHERE id=@Id;
     ";
+    #endregion Queries
 
     public EmployeeRepository(
         IDatabaseClient client,
@@ -45,20 +70,29 @@ internal sealed class EmployeeRepository : IEmployeeRepository
 
     public async Task<Employee> GetAsync(uint id)
     {
-        var employee = await _client.WithConnectionAsync(
-            c => c.QuerySingleOrDefaultAsync<EmployeeEntity>(SELECT_EMPLOYEES_BY_ID, new { Id = id }),
+        var lookup = new Dictionary<uint, EmployeeEntity>();
+
+        await _client.WithConnectionAsync(
+            c => c.QueryAsync<EmployeeEntity, DependentEntity, EmployeeEntity>(
+                SELECT_EMPLOYEES_BY_ID,
+                (ee, dep) => MapDependentsToEmployee(lookup, ee, dep),
+                new { Id = id }),
             Constants.BENEFITS_CONNECTION);
 
-        return _mapper.Map<Employee>(employee);
+        return _mapper.Map<Employee>(lookup.Values.SingleOrDefault());
     }
 
     public async Task<IEnumerable<Employee>> GetAsync()
     {
-        var employees = await _client.WithConnectionAsync(
-            c => c.QueryAsync<EmployeeEntity>(SELECT_ALL_EMPLOYEES),
+        var lookup = new Dictionary<uint, EmployeeEntity>();
+
+        await _client.WithConnectionAsync(
+            c => c.QueryAsync<EmployeeEntity, DependentEntity, EmployeeEntity>(
+                SELECT_ALL_EMPLOYEES,
+                (ee, dep) => MapDependentsToEmployee(lookup, ee, dep)),
             Constants.BENEFITS_CONNECTION);
 
-        return _mapper.Map<IEnumerable<Employee>>(employees);
+        return _mapper.Map<IEnumerable<Employee>>(lookup.Values);
     }
 
     public Task<Employee> UpsertAsync(Employee employee)
@@ -85,6 +119,27 @@ internal sealed class EmployeeRepository : IEmployeeRepository
         await _client.WithConnectionAsync(
                 c => c.UpdateAsync<EmployeeEntity>(_mapper.Map<EmployeeEntity>(employee)),
                 Constants.BENEFITS_CONNECTION);
+
+        return employee;
+    }
+
+    private EmployeeEntity MapDependentsToEmployee(
+        Dictionary<uint, EmployeeEntity> lookup,
+        EmployeeEntity ee,
+        DependentEntity dep)
+    {
+        if (!lookup.TryGetValue(ee.id, out EmployeeEntity employee))
+        {
+            employee = ee;
+            lookup.Add(employee.id, employee);
+        }
+
+        if (dep != null)
+        {
+            dep.employees_id = ee.id;
+            dep.employee = ee;
+            employee.dependents.Add(dep);
+        }
 
         return employee;
     }

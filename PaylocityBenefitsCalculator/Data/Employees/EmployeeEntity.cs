@@ -1,11 +1,12 @@
 using Dapper.Contrib.Extensions;
+using Data.Dependents;
 
 namespace Data.Employees;
 
 [Table("employees")]
 internal class EmployeeEntity : PersonEntity
 {
-    [Key]
-    public uint id { get; set; }
     public decimal salary { get; set; }
+    [Write(false)]
+    public List<DependentEntity> dependents { get; set; } = new List<DependentEntity>();
 }
