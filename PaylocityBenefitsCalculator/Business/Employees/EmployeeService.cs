@@ -9,11 +9,16 @@ internal sealed class EmployeeService : IEmployeeService
         _repo = repo;
     }
 
-    public Task DeleteAsync() => _repo.DeleteAsync();
+    public async Task<Employee> DeleteAsync(uint id)
+    {
+        var employee = await _repo.GetAsync(id);
+
+        return await _repo.DeleteAsync(employee);
+    }
 
     public Task<Employee> GetAsync(uint id) => _repo.GetAsync(id);
 
-    public Task GetAsync() => _repo.GetAsync();
+    public Task<IEnumerable<Employee>> GetAsync() => _repo.GetAsync();
 
-    public Task UpsertAsync() => _repo.UpsertAsync();
+    public Task<Employee> UpsertAsync(Employee employee) => _repo.UpsertAsync(employee);
 }

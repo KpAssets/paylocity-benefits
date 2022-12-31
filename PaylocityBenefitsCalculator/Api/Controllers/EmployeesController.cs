@@ -1,5 +1,4 @@
-﻿using Api.Models.Dependents;
-using Api.Models.Employees;
+﻿using Api.Models.Employees;
 using Api.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -45,77 +44,11 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> GetAll()
         {
-            await _employeeService.GetAsync();
-            //task: use a more realistic production approach
-            var employees = new List<GetEmployeeDto>
-            {
-                new()
-                {
-                    Id = 1,
-                    FirstName = "LeBron",
-                    LastName = "James",
-                    Salary = 75420.99m,
-                    DateOfBirth = new DateTime(1984, 12, 30)
-                },
-                new()
-                {
-                    Id = 2,
-                    FirstName = "Ja",
-                    LastName = "Morant",
-                    Salary = 92365.22m,
-                    DateOfBirth = new DateTime(1999, 8, 10),
-                    Dependents = new List<GetDependentDto>
-                    {
-                        new()
-                        {
-                            Id = 1,
-                            FirstName = "Spouse",
-                            LastName = "Morant",
-                            Relationship = "Spouse",
-                            DateOfBirth = new DateTime(1998, 3, 3)
-                        },
-                        new()
-                        {
-                            Id = 2,
-                            FirstName = "Child1",
-                            LastName = "Morant",
-                            Relationship = "Child",
-                            DateOfBirth = new DateTime(2020, 6, 23)
-                        },
-                        new()
-                        {
-                            Id = 3,
-                            FirstName = "Child2",
-                            LastName = "Morant",
-                            Relationship = "Child",
-                            DateOfBirth = new DateTime(2021, 5, 18)
-                        }
-                    }
-                },
-                new()
-                {
-                    Id = 3,
-                    FirstName = "Michael",
-                    LastName = "Jordan",
-                    Salary = 143211.12m,
-                    DateOfBirth = new DateTime(1963, 2, 17),
-                    Dependents = new List<GetDependentDto>
-                    {
-                        new()
-                        {
-                            Id = 4,
-                            FirstName = "DP",
-                            LastName = "Jordan",
-                            Relationship = "DomesticPartner",
-                            DateOfBirth = new DateTime(1974, 1, 2)
-                        }
-                    }
-                }
-            };
+            var employees = await _employeeService.GetAsync();
 
             var result = new ApiResponse<List<GetEmployeeDto>>
             {
-                Data = employees,
+                Data = _mapper.Map<List<GetEmployeeDto>>(employees),
                 Success = true
             };
 
@@ -126,33 +59,42 @@ namespace Api.Controllers
             SwaggerOperation(Summary = "Add employee"),
             HttpPost
         ]
-        public async Task<ActionResult<ApiResponse<List<AddEmployeeDto>>>> AddEmployee(AddEmployeeDto newEmployee)
+        public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> AddEmployee(AddEmployeeDto newEmployee)
         {
-            await _employeeService.UpsertAsync();
-
-            return Ok(new ApiResponse<List<AddEmployeeDto>>());
+            return Ok(new ApiResponse<GetEmployeeDto>
+            {
+                Data = _mapper.Map<GetEmployeeDto>(
+                    await _employeeService.UpsertAsync(
+                        _mapper.Map<Employee>(newEmployee)))
+            });
         }
 
         [
             SwaggerOperation(Summary = "Update employee"),
             HttpPut("{id}")
         ]
-        public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> UpdateEmployee(int id, UpdateEmployeeDto updatedEmployee)
+        public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> UpdateEmployee(uint id, UpdateEmployeeDto updatedEmployee)
         {
-            await _employeeService.UpsertAsync();
+            var employee = _mapper.Map<Employee>(updatedEmployee);
+            employee.Id = id;
 
-            return Ok(new ApiResponse<GetEmployeeDto>());
+            return Ok(new ApiResponse<GetEmployeeDto>
+            {
+                Data = _mapper.Map<GetEmployeeDto>(
+                    await _employeeService.UpsertAsync(employee))
+            });
         }
 
         [
             SwaggerOperation(Summary = "Delete employee"),
             HttpDelete("{id}")
         ]
-        public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> DeleteEmployee(int id)
+        public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> DeleteEmployee(uint id)
         {
-            await _employeeService.DeleteAsync();
-
-            return Ok(new ApiResponse<List<GetEmployeeDto>>());
+            return Ok(new ApiResponse<GetEmployeeDto>
+            {
+                Data = _mapper.Map<GetEmployeeDto>(await _employeeService.DeleteAsync(id))
+            });
         }
     }
 }

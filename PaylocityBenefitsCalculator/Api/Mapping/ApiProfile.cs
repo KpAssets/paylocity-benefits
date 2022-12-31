@@ -14,5 +14,15 @@ internal sealed class ApiProfile : Profile
             .ForMember(x => x.LastName, opts => opts.MapFrom(src => src.LastName))
             .ForMember(x => x.DateOfBirth, opts => opts.MapFrom(src => src.DateOfBirth))
             .ForMember(x => x.Salary, opts => opts.MapFrom(src => src.Salary));
+        CreateMap<AddEmployeeDto, Employee>()
+            .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => src.FirstName))
+            .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.DateOfBirth, opts => opts.MapFrom(src => src.DateOfBirth))
+            .ForMember(dest => dest.Salary, opts => opts.MapFrom(src => src.Salary));
+        CreateMap<UpdateEmployeeDto, Employee>()
+            .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => src.FirstName))
+            .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.DateOfBirth, opts => opts.MapFrom(src => src.DateOfBirth))
+            .ForMember(dest => dest.Salary, opts => opts.MapFrom(src => src.Salary));
     }
 }

@@ -13,6 +13,7 @@ internal class DataProfile : Profile
             .ForMember(x => x.FirstName, opts => opts.MapFrom(src => src.first_name))
             .ForMember(x => x.LastName, opts => opts.MapFrom(src => src.last_name))
             .ForMember(x => x.DateOfBirth, opts => opts.MapFrom(src => src.date_of_birth))
-            .ForMember(x => x.Salary, opts => opts.MapFrom(src => src.salary));
+            .ForMember(x => x.Salary, opts => opts.MapFrom(src => src.salary))
+            .ReverseMap();
     }
 }
