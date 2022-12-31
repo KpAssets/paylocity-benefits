@@ -1,44 +1,48 @@
 ﻿using Api.Models.Dependents;
 using Api.Models.Employees;
 using Api.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Business.Employees;
 
 namespace Api.Controllers
 {
-    [ApiController]
-    [Route("api/v1/[controller]")]
+    [
+        ApiController,
+        Route("api/v1/[controller]")
+    ]
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IMapper _mapper;
 
-        public EmployeesController(IEmployeeService employeeService)
+        public EmployeesController(
+            IEmployeeService employeeService,
+            IMapper mapper)
         {
             _employeeService = employeeService;
+            _mapper = mapper;
         }
 
-        [SwaggerOperation(Summary = "Get employee by id")]
-        [HttpGet("{id}")]
+        [
+            SwaggerOperation(Summary = "Get employee by id"),
+            HttpGet("{id}")
+        ]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(uint id)
         {
             var employee = await _employeeService.GetAsync(id);
 
             return Ok(new ApiResponse<GetEmployeeDto>
             {
-                Data = new GetEmployeeDto
-                {
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName,
-                    DateOfBirth = employee.DateOfBirth,
-                    Id = employee.Id,
-                    Salary = employee.Salary
-                }
+                Data = _mapper.Map<GetEmployeeDto>(employee)
             });
         }
 
-        [SwaggerOperation(Summary = "Get all employees")]
-        [HttpGet("")]
+        [
+            SwaggerOperation(Summary = "Get all employees"),
+            HttpGet
+        ]
         public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> GetAll()
         {
             await _employeeService.GetAsync();
@@ -118,8 +122,10 @@ namespace Api.Controllers
             return result;
         }
 
-        [SwaggerOperation(Summary = "Add employee")]
-        [HttpPost]
+        [
+            SwaggerOperation(Summary = "Add employee"),
+            HttpPost
+        ]
         public async Task<ActionResult<ApiResponse<List<AddEmployeeDto>>>> AddEmployee(AddEmployeeDto newEmployee)
         {
             await _employeeService.UpsertAsync();
@@ -127,8 +133,10 @@ namespace Api.Controllers
             return Ok(new ApiResponse<List<AddEmployeeDto>>());
         }
 
-        [SwaggerOperation(Summary = "Update employee")]
-        [HttpPut("{id}")]
+        [
+            SwaggerOperation(Summary = "Update employee"),
+            HttpPut("{id}")
+        ]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> UpdateEmployee(int id, UpdateEmployeeDto updatedEmployee)
         {
             await _employeeService.UpsertAsync();
@@ -136,8 +144,10 @@ namespace Api.Controllers
             return Ok(new ApiResponse<GetEmployeeDto>());
         }
 
-        [SwaggerOperation(Summary = "Delete employee")]
-        [HttpDelete("{id}")]
+        [
+            SwaggerOperation(Summary = "Delete employee"),
+            HttpDelete("{id}")
+        ]
         public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> DeleteEmployee(int id)
         {
             await _employeeService.DeleteAsync();

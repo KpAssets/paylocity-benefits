@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder
     .Services
-        .AddAutoMapper(x => x.AddMaps(new[] { "Data" }))
+        .AddAutoMapper(x => x.AddMaps(new List<string> { "Api", "Business", "Data" }))
         .AddBusinessServices()
         .AddDataServices()
         .AddDataClientServices(builder.Configuration.GetSection("Data.Client.Settings"));
