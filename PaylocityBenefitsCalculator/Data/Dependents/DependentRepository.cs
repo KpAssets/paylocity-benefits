@@ -29,6 +29,22 @@ internal sealed class DependentRepository : IDependentRepository
         LEFT JOIN employees AS ee ON ee.id = dep.employees_id
         WHERE dep.id=@Id;
     ";
+
+    private const string SELECT_ALL_DEPENDENTS = @"
+        SELECT
+            dep.id,
+            dep.first_name,
+            dep.last_name,
+            dep.date_of_birth,
+            dep.relationship,
+            ee.id,
+            ee.first_name,
+            ee.last_name,
+            ee.date_of_birth,
+            ee.salary
+        FROM dependents AS dep
+        LEFT JOIN employees AS ee ON ee.id = dep.employees_id
+    ";
     #endregion
 
     public DependentRepository(
@@ -55,21 +71,52 @@ internal sealed class DependentRepository : IDependentRepository
         await _client.WithConnectionAsync(
             c => c.QueryAsync<DependentEntity, EmployeeEntity, DependentEntity>(
                 SELECT_DEPENDENT_BY_ID,
-                (ee, dep) => MapEmployeeToDependent(lookup, ee, dep),
+                (dep, ee) => MapEmployeeToDependent(lookup, dep, ee),
                 new { Id = id }),
             Constants.BENEFITS_CONNECTION);
 
         return _mapper.Map<Dependent>(lookup.Values.SingleOrDefault());
     }
 
-    public Task<IEnumerable<Dependent>> GetAsync()
+    public async Task<IEnumerable<Dependent>> GetAsync()
     {
-        throw new NotImplementedException();
+        var lookup = new Dictionary<uint, DependentEntity>();
+
+        await _client.WithConnectionAsync(
+            c => c.QueryAsync<DependentEntity, EmployeeEntity, DependentEntity>(
+                SELECT_ALL_DEPENDENTS,
+                (dep, ee) => MapEmployeeToDependent(lookup, dep, ee)),
+            Constants.BENEFITS_CONNECTION);
+
+        return _mapper.Map<IEnumerable<Dependent>>(lookup.Values);
     }
 
     public Task<Dependent> UpsertAsync(Dependent dependent)
     {
-        throw new NotImplementedException();
+        if (dependent.Id <= 0)
+            return InsertAsync(dependent);
+
+        return UpdateAsync(dependent);
+    }
+
+    private async Task<Dependent> InsertAsync(Dependent dependent)
+    {
+        var insertedId = await _client.WithConnectionAsync(
+                c => c.InsertAsync<DependentEntity>(_mapper.Map<DependentEntity>(dependent)),
+                Constants.BENEFITS_CONNECTION);
+
+        dependent.Id = (uint)insertedId;
+
+        return dependent;
+    }
+
+    private async Task<Dependent> UpdateAsync(Dependent dependent)
+    {
+        await _client.WithConnectionAsync(
+                c => c.UpdateAsync<DependentEntity>(_mapper.Map<DependentEntity>(dependent)),
+                Constants.BENEFITS_CONNECTION);
+
+        return dependent;
     }
 
     private DependentEntity MapEmployeeToDependent(

@@ -30,11 +30,9 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(uint id)
         {
-            var employee = await _employeeService.GetAsync(id);
-
             return Ok(new ApiResponse<GetEmployeeDto>
             {
-                Data = _mapper.Map<GetEmployeeDto>(employee)
+                Data = _mapper.Map<GetEmployeeDto>(await _employeeService.GetAsync(id))
             });
         }
 
@@ -44,15 +42,11 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> GetAll()
         {
-            var employees = await _employeeService.GetAsync();
-
-            var result = new ApiResponse<List<GetEmployeeDto>>
+            return Ok(new ApiResponse<List<GetEmployeeDto>>
             {
-                Data = _mapper.Map<List<GetEmployeeDto>>(employees),
+                Data = _mapper.Map<List<GetEmployeeDto>>(await _employeeService.GetAsync()),
                 Success = true
-            };
-
-            return result;
+            });
         }
 
         [

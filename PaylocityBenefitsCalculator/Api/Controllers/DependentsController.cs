@@ -30,11 +30,9 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetDependentDto>>> Get(uint id)
         {
-            var dependent = await _dependentService.GetAsync(id);
-
             return Ok(new ApiResponse<GetDependentDto>
             {
-                Data = _mapper.Map<GetDependentDto>(dependent)
+                Data = _mapper.Map<GetDependentDto>(await _dependentService.GetAsync(id))
             });
         }
 
@@ -44,16 +42,25 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<List<GetDependentDto>>>> GetAll()
         {
-            throw new NotImplementedException();
+            return Ok(new ApiResponse<List<GetDependentDto>>
+            {
+                Data = _mapper.Map<List<GetDependentDto>>(await _dependentService.GetAsync()),
+                Success = true
+            });
         }
 
         [
             SwaggerOperation(Summary = "Add dependent"),
             HttpPost
         ]
-        public async Task<ActionResult<ApiResponse<List<AddDependentWithEmployeeIdDto>>>> AddDependent(AddDependentWithEmployeeIdDto newDependent)
+        public async Task<ActionResult<ApiResponse<GetDependentDto>>> AddDependent(AddDependentWithEmployeeIdDto newDependent)
         {
-            throw new NotImplementedException();
+            return Ok(new ApiResponse<GetDependentDto>
+            {
+                Data = _mapper.Map<GetDependentDto>(
+                    await _dependentService.UpsertAsync(
+                        _mapper.Map<Dependent>(newDependent)))
+            });
         }
 
         [

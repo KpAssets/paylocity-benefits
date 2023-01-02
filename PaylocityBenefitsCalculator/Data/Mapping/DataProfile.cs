@@ -23,12 +23,14 @@ internal class DataProfile : Profile
             .ForMember(dest => dest.first_name, opts => opts.MapFrom(src => src.FirstName))
             .ForMember(dest => dest.last_name, opts => opts.MapFrom(src => src.LastName))
             .ForMember(dest => dest.date_of_birth, opts => opts.MapFrom(src => src.DateOfBirth))
-            .ForMember(dest => dest.relationship, opts => opts.MapFrom(src => src.Relationship.ToString().ToLower()));
+            .ForMember(dest => dest.relationship, opts => opts.MapFrom(src => src.Relationship.ToString().ToLower()))
+            .ForMember(dest => dest.employees_id, opts => opts.MapFrom(src => src.EmployeeId));
         CreateMap<DependentEntity, Dependent>()
             .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.id))
             .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => src.first_name))
             .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => src.last_name))
             .ForMember(dest => dest.DateOfBirth, opts => opts.MapFrom(src => src.date_of_birth))
-            .ForMember(dest => dest.Relationship, opts => opts.MapFrom(src => Enum.Parse<Relationship>(src.relationship, true)));
+            .ForMember(dest => dest.Relationship, opts => opts.MapFrom(src => Enum.Parse<Relationship>(src.relationship, true)))
+            .ForMember(dest => dest.EmployeeId, opts => opts.MapFrom(src => src.employees_id));
     }
 }

@@ -10,4 +10,7 @@ internal sealed class DependentService : IDependentService
     }
 
     public Task<Dependent> GetAsync(uint id) => _repo.GetAsync(id);
+
+    public Task<IEnumerable<Dependent>> GetAsync() => _repo.GetAsync();
+    public Task<Dependent> UpsertAsync(Dependent dependent) => _repo.UpsertAsync(dependent);
 }
