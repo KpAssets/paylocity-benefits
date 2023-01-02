@@ -1,8 +1,8 @@
-﻿using Api.Models.Employees;
-using Api.Models;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Api.Models.Employees;
+using Api.Models;
 using Business.Employees;
 
 namespace Api.Controllers

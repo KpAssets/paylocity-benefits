@@ -31,6 +31,7 @@ internal sealed class ApiProfile : Profile
             .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
             .ForMember(dest => dest.FirstName, opts => opts.MapFrom(src => src.FirstName))
             .ForMember(dest => dest.LastName, opts => opts.MapFrom(src => src.LastName))
-            .ForMember(dest => dest.DateOfBirth, opts => opts.MapFrom(src => src.DateOfBirth));
+            .ForMember(dest => dest.DateOfBirth, opts => opts.MapFrom(src => src.DateOfBirth))
+            .ForMember(dest => dest.Relationship, opts => opts.MapFrom(src => src.Relationship.ToString()));
     }
 }
