@@ -7,53 +7,45 @@ internal sealed class SqliteDatabaseClientStrategy : IDatabaseClientStrategy
 {
     public async Task<T> WithConnectionAsync<T>(Func<IDbConnection, Task<T>> func, DataContext context)
     {
-        try
+        using (var connection = new SqliteConnection(CreateConnectionString(context)))
         {
-            using (var connection = new SqliteConnection(CreateConnectionString(context)))
-            {
-                connection.Open();
+            OpenDatabase(connection);
 
+            try
+            {
                 return await func(connection);
             }
-        }
-        catch (Exception ex)
-        {
-            // log!
-            throw;
+            catch (Exception ex)
+            {
+                // log!
+                throw;
+            }
         }
     }
 
     public async Task<T> WithTransactionAsync<T>(Func<IDbConnection, IDbTransaction, Task<T>> func, DataContext context)
     {
-        try
+        using (var connection = new SqliteConnection(CreateConnectionString(context)))
         {
-            using (var connection = new SqliteConnection(CreateConnectionString(context)))
+            OpenDatabase(connection);
+
+            using (var transaction = connection.BeginTransaction())
             {
-                connection.Open();
-
-                using (var transaction = connection.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        var result = await func(connection, transaction);
+                    var result = await func(connection, transaction);
 
-                        transaction.Commit();
+                    transaction.Commit();
 
-                        return result;
-                    }
-                    catch (Exception ex)
-                    {
-                        // log!
-                        transaction.Rollback();
-                        throw;
-                    }
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    // log!
+                    transaction.Rollback();
+                    throw;
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            // log!
-            throw;
         }
     }
 
@@ -63,4 +55,17 @@ internal sealed class SqliteDatabaseClientStrategy : IDatabaseClientStrategy
             DataSource = Path.Combine(context.Path, context.DatabaseName),
             ForeignKeys = true
         }.ToString();
+
+    private void OpenDatabase(IDbConnection connection)
+    {
+        try
+        {
+            connection.Open();
+        }
+        catch (Exception ex)
+        {
+            // log!
+            throw;
+        }
+    }
 }
