@@ -67,18 +67,28 @@ namespace Api.Controllers
             SwaggerOperation(Summary = "Update dependent"),
             HttpPut("{id}")
         ]
-        public async Task<ActionResult<ApiResponse<GetDependentDto>>> UpdateDependent(int id, UpdateDependentDto updatedDependent)
+        public async Task<ActionResult<ApiResponse<GetDependentDto>>> UpdateDependent(uint id, UpdateDependentDto updatedDependent)
         {
-            throw new NotImplementedException();
+            var dependent = _mapper.Map<Dependent>(updatedDependent);
+            dependent.Id = id;
+
+            return Ok(new ApiResponse<GetDependentDto>
+            {
+                Data = _mapper.Map<GetDependentDto>(
+                    await _dependentService.UpsertAsync(dependent))
+            });
         }
 
         [
             SwaggerOperation(Summary = "Delete dependent"),
             HttpDelete("{id}")
         ]
-        public async Task<ActionResult<ApiResponse<List<GetDependentDto>>>> DeleteDependent(int id)
+        public async Task<ActionResult<ApiResponse<GetDependentDto>>> DeleteDependent(uint id)
         {
-            throw new NotImplementedException();
+            return Ok(new ApiResponse<GetDependentDto>
+            {
+                Data = _mapper.Map<GetDependentDto>(await _dependentService.DeleteAsync(id))
+            });
         }
     }
 }

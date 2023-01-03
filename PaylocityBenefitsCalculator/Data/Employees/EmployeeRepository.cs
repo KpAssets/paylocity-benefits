@@ -45,10 +45,6 @@ internal sealed class EmployeeRepository : IEmployeeRepository
         LEFT JOIN dependents AS dep ON dep.employees_id = ee.id
         WHERE ee.id=@Id;
     ";
-
-    private const string DELETE_EMPLOYEE_BY_ID = @"
-        DELETE FROM employee WHERE id=@Id;
-    ";
     #endregion Queries
 
     public EmployeeRepository(
@@ -106,8 +102,8 @@ internal sealed class EmployeeRepository : IEmployeeRepository
     private async Task<Employee> InsertAsync(Employee employee)
     {
         var insertedId = await _client.WithConnectionAsync(
-                c => c.InsertAsync<EmployeeEntity>(_mapper.Map<EmployeeEntity>(employee)),
-                Constants.BENEFITS_CONNECTION);
+            c => c.InsertAsync<EmployeeEntity>(_mapper.Map<EmployeeEntity>(employee)),
+            Constants.BENEFITS_CONNECTION);
 
         employee.Id = (uint)insertedId;
 
@@ -117,8 +113,8 @@ internal sealed class EmployeeRepository : IEmployeeRepository
     private async Task<Employee> UpdateAsync(Employee employee)
     {
         await _client.WithConnectionAsync(
-                c => c.UpdateAsync<EmployeeEntity>(_mapper.Map<EmployeeEntity>(employee)),
-                Constants.BENEFITS_CONNECTION);
+            c => c.UpdateAsync<EmployeeEntity>(_mapper.Map<EmployeeEntity>(employee)),
+            Constants.BENEFITS_CONNECTION);
 
         return employee;
     }

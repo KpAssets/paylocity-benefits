@@ -45,6 +45,12 @@ internal sealed class DependentRepository : IDependentRepository
         FROM dependents AS dep
         LEFT JOIN employees AS ee ON ee.id = dep.employees_id
     ";
+
+    private const string UPDATE_DEPENDENT = @"
+        UPDATE dependents 
+        SET first_name=@first_name, last_name=@last_name, date_of_birth=@date_of_birth, relationship=@relationship
+        WHERE id=@id;
+    ";
     #endregion
 
     public DependentRepository(
@@ -102,8 +108,8 @@ internal sealed class DependentRepository : IDependentRepository
     private async Task<Dependent> InsertAsync(Dependent dependent)
     {
         var insertedId = await _client.WithConnectionAsync(
-                c => c.InsertAsync<DependentEntity>(_mapper.Map<DependentEntity>(dependent)),
-                Constants.BENEFITS_CONNECTION);
+            c => c.InsertAsync<DependentEntity>(_mapper.Map<DependentEntity>(dependent)),
+            Constants.BENEFITS_CONNECTION);
 
         dependent.Id = (uint)insertedId;
 
@@ -113,8 +119,8 @@ internal sealed class DependentRepository : IDependentRepository
     private async Task<Dependent> UpdateAsync(Dependent dependent)
     {
         await _client.WithConnectionAsync(
-                c => c.UpdateAsync<DependentEntity>(_mapper.Map<DependentEntity>(dependent)),
-                Constants.BENEFITS_CONNECTION);
+            c => c.ExecuteAsync(UPDATE_DEPENDENT, _mapper.Map<DependentEntity>(dependent)),
+            Constants.BENEFITS_CONNECTION);
 
         return dependent;
     }
