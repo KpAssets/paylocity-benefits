@@ -101,11 +101,16 @@ internal sealed class EmployeeRepository : IEmployeeRepository
 
     private async Task<Employee> InsertAsync(Employee employee)
     {
-        var insertedId = await _client.WithConnectionAsync(
-            c => c.InsertAsync<EmployeeEntity>(_mapper.Map<EmployeeEntity>(employee)),
-            Constants.BENEFITS_CONNECTION);
+        await _client.WithTransactionAsync(async (c, t) =>
+        {
+            var employeeId = await c.InsertAsync<EmployeeEntity>(_mapper.Map<EmployeeEntity>(employee));
+            employee.Id = (uint)employeeId;
 
-        employee.Id = (uint)insertedId;
+            foreach (var dep in employee.Dependents) dep.EmployeeId = (uint)employeeId;
+
+            await c.InsertAsync(_mapper.Map<List<DependentEntity>>(employee.Dependents));
+        },
+        Constants.BENEFITS_CONNECTION);
 
         return employee;
     }

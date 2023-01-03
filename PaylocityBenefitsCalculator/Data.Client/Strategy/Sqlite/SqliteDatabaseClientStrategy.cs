@@ -23,7 +23,7 @@ internal sealed class SqliteDatabaseClientStrategy : IDatabaseClientStrategy
         }
     }
 
-    public async Task<T> WithTransactionAsync<T>(Func<IDbConnection, IDbTransaction, Task<T>> func, DataContext context)
+    public async Task WithTransactionAsync(Func<IDbConnection, IDbTransaction, Task> func, DataContext context)
     {
         using (var connection = new SqliteConnection(CreateConnectionString(context)))
         {
@@ -33,11 +33,9 @@ internal sealed class SqliteDatabaseClientStrategy : IDatabaseClientStrategy
             {
                 try
                 {
-                    var result = await func(connection, transaction);
+                    await func(connection, transaction);
 
                     transaction.Commit();
-
-                    return result;
                 }
                 catch (Exception ex)
                 {

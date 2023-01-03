@@ -26,7 +26,7 @@ internal sealed class DatabaseClient : IDatabaseClient
             .WithConnectionAsync(func, context);
     }
 
-    public Task<T> WithTransactionAsync<T>(Func<IDbConnection, IDbTransaction, Task<T>> func, string connectionName)
+    public Task WithTransactionAsync(Func<IDbConnection, IDbTransaction, Task> func, string connectionName)
     {
         var context = GetDataContextForConnectionName(connectionName);
 
