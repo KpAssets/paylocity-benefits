@@ -7,15 +7,10 @@ public class AddDependentDto : PersonDto
 {
     public string Relationship { get; set; } = "none";
 
-    public override ValidationResult Validate()
+    protected override void GatherInvalidReasons()
     {
-        var invalidReasons = new List<string>();
-
-        Relationship.NonNullNonEmpty(invalidReasons);
-        Relationship.IsEnum<Relationship>(invalidReasons);
-
-        invalidReasons.AddRange(base.Validate().InvalidReasons);
-
-        return new ValidationResult(invalidReasons);
+        Relationship.NonNullNonEmpty(InvalidReasons);
+        Relationship.IsEnum<Relationship>(InvalidReasons);
+        base.GatherInvalidReasons();
     }
 }

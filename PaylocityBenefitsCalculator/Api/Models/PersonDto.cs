@@ -2,23 +2,19 @@ using Api.Models.Validations;
 
 namespace Api.Models;
 
-public abstract class PersonDto : IValidatable
+public abstract class PersonDto : AbstractValidatable
 {
     private const uint NameCharacterLimit = 100;
     public uint Id { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
     public DateTime DateOfBirth { get; set; }
 
-    public virtual ValidationResult Validate()
+    protected override void GatherInvalidReasons()
     {
-        var invalidReasons = new List<string>();
-
-        FirstName.NonNullNonEmpty(invalidReasons);
-        FirstName.LessThanOrEqual(invalidReasons, NameCharacterLimit);
-        LastName.NonNullNonEmpty(invalidReasons);
-        LastName.LessThanOrEqual(invalidReasons, NameCharacterLimit);
-
-        return new ValidationResult(invalidReasons);
+        FirstName.NonNullNonEmpty(InvalidReasons);
+        FirstName.LessThanOrEqual(InvalidReasons, NameCharacterLimit);
+        LastName.NonNullNonEmpty(InvalidReasons);
+        LastName.LessThanOrEqual(InvalidReasons, NameCharacterLimit);
     }
 }

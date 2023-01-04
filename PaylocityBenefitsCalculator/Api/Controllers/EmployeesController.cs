@@ -31,6 +31,8 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Get(uint id)
         {
+            ValidateEmployeeId(id);
+
             return Ok(new ApiResponse<GetEmployeeDto>
             {
                 Data = _mapper.Map<GetEmployeeDto>(await _employeeService.GetAsync(id))
@@ -72,6 +74,10 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> UpdateEmployee(uint id, UpdateEmployeeDto updatedEmployee)
         {
+            ValidateEmployeeId(id);
+
+            ValidationHelper.Validate(updatedEmployee);
+
             var employee = _mapper.Map<Employee>(updatedEmployee);
             employee.Id = id;
 
@@ -88,10 +94,18 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> DeleteEmployee(uint id)
         {
+            ValidateEmployeeId(id);
+
             return Ok(new ApiResponse<GetEmployeeDto>
             {
                 Data = _mapper.Map<GetEmployeeDto>(await _employeeService.DeleteAsync(id))
             });
+        }
+
+        private void ValidateEmployeeId(uint id)
+        {
+            if (id <= 0)
+                throw new InvalidDataException("Employee id must be greater than 0");
         }
     }
 }

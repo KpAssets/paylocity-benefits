@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using Api.Extensions;
 using Business.Extensions;
 using Data.Extensions;
 
@@ -53,5 +54,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseApiExceptionHandler();
 
 app.Run();

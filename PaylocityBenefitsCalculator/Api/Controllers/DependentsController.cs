@@ -31,10 +31,10 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetDependentDto>>> Get(uint id)
         {
-            return Ok(new ApiResponse<GetDependentDto>
-            {
-                Data = _mapper.Map<GetDependentDto>(await _dependentService.GetAsync(id))
-            });
+            ValidateDependentId(id);
+
+            return Ok(
+                _mapper.Map<GetDependentDto>(await _dependentService.GetAsync(id)));
         }
 
         [
@@ -43,11 +43,7 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<List<GetDependentDto>>>> GetAll()
         {
-            return Ok(new ApiResponse<List<GetDependentDto>>
-            {
-                Data = _mapper.Map<List<GetDependentDto>>(await _dependentService.GetAsync()),
-                Success = true
-            });
+            return Ok(_mapper.Map<List<GetDependentDto>>(await _dependentService.GetAsync()));
         }
 
         [
@@ -72,6 +68,10 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetDependentDto>>> UpdateDependent(uint id, UpdateDependentDto updatedDependent)
         {
+            ValidateDependentId(id);
+
+            ValidationHelper.Validate(updatedDependent);
+
             var dependent = _mapper.Map<Dependent>(updatedDependent);
             dependent.Id = id;
 
@@ -88,10 +88,18 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetDependentDto>>> DeleteDependent(uint id)
         {
+            ValidateDependentId(id);
+
             return Ok(new ApiResponse<GetDependentDto>
             {
                 Data = _mapper.Map<GetDependentDto>(await _dependentService.DeleteAsync(id))
             });
+        }
+
+        private void ValidateDependentId(uint id)
+        {
+            if (id <= 0)
+                throw new InvalidDataException("Dependent id must be greater than 0");
         }
     }
 }
