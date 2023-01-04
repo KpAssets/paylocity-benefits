@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Api.Models.Validations;
 using Api.Models.Dependents;
 using Api.Models;
 using Business.Dependents;
@@ -55,6 +56,8 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<GetDependentDto>>> AddDependent(AddDependentWithEmployeeIdDto newDependent)
         {
+            ValidationHelper.Validate(newDependent);
+
             return Ok(new ApiResponse<GetDependentDto>
             {
                 Data = _mapper.Map<GetDependentDto>(
