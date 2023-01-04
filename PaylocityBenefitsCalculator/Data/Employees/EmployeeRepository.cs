@@ -2,6 +2,7 @@ using AutoMapper;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Business.Employees;
+using Business.Exceptions;
 using Data.Client;
 using Data.Dependents;
 
@@ -74,6 +75,9 @@ internal sealed class EmployeeRepository : IEmployeeRepository
                 (ee, dep) => MapDependentsToEmployee(lookup, ee, dep),
                 new { Id = id }),
             Constants.BENEFITS_CONNECTION);
+
+        if (!lookup.Values.Any())
+            throw new NotFoundException($"Employee with id '{id}' not found");
 
         return _mapper.Map<Employee>(lookup.Values.SingleOrDefault());
     }

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Api.Models;
+using Business.Exceptions;
 
 namespace Api;
 
@@ -20,21 +21,38 @@ internal class ExceptionHandlerMiddleware
         }
         catch (InvalidDataException ex)
         {
-            await WriteApiResponseForException(context, "Input validations failed", ex);
+            await WriteApiResponseForException(
+                context,
+                StatusCodes.Status400BadRequest,
+                "Input validations failed",
+                ex);
+        }
+        catch (NotFoundException ex)
+        {
+            await WriteApiResponseForException(
+                context,
+                StatusCodes.Status404NotFound,
+                "Requested resource not found",
+                ex);
         }
         catch (Exception ex)
         {
-            await WriteApiResponseForException(context, "Unexpected exception occurred", ex);
+            await WriteApiResponseForException(
+                context,
+                StatusCodes.Status500InternalServerError,
+                "Unexpected exception occurred",
+                ex);
         }
     }
 
     private async Task WriteApiResponseForException(
         HttpContext context,
+        int statusCode,
         string message,
         Exception ex)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status200OK;
+        context.Response.StatusCode = statusCode;
 
         await context.Response.WriteAsync(
             JsonSerializer.Serialize(
