@@ -1,17 +1,17 @@
-namespace Business.Calculations.Payroll.Earnings;
+namespace Business.Payroll.Earnings;
 
 // SalaryCalculationStep is responsible for generating the Employee's
 // base salary for the pay period
 internal sealed class SalaryCalculationStep : IEarningCalculationStep
 {
-    public Task<Check> Process(Check check)
+    public Task<Paycheck> Process(Paycheck check)
     {
         try
         {
             check.Earnings.Add(
                 BuildSalaryEarningForPayPeriod(check.Employee.Salary));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // log!
             throw;

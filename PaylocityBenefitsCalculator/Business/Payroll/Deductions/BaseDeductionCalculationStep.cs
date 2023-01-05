@@ -1,16 +1,16 @@
-namespace Business.Calculations.Payroll.Deductions;
+namespace Business.Payroll.Deductions;
 
 internal sealed class BaseDeductionCalculationStep : IDeductionCalculationStep
 {
     private const decimal YEARLY_BASE_BENEFIT_COST = 12000;
 
-    public Task<Check> Process(Check check)
+    public Task<Paycheck> Process(Paycheck check)
     {
         try
         {
             check.Deductions.Add(BuildBaseDeductionForPayPeriod());
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // log!
             throw;

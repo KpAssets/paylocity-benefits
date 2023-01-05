@@ -1,6 +1,6 @@
-namespace Business.Calculations.Payroll;
+namespace Business.Payroll;
 
-internal abstract class PayrollItem
+public abstract class PayrollItem
 {
     public decimal Amount { get; set; }
     public string Description { get; set; } = string.Empty;

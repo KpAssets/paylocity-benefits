@@ -1,12 +1,12 @@
 using Business.Dependents;
 
-namespace Business.Calculations.Payroll.Deductions;
+namespace Business.Payroll.Deductions;
 
 internal sealed class DependentDeductionCalculationStep : IDeductionCalculationStep
 {
     private const decimal YEARLY_BENEFIT_COST_PER_DEPENDENT = 7200;
 
-    public Task<Check> Process(Check check)
+    public Task<Paycheck> Process(Paycheck check)
     {
         try
         {
@@ -18,7 +18,7 @@ internal sealed class DependentDeductionCalculationStep : IDeductionCalculationS
                             x => BuildDependentDeductionForPayPeriod(x)));
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // log!
             throw;

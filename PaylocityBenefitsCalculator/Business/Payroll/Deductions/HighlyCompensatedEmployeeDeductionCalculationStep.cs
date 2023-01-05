@@ -1,11 +1,11 @@
-namespace Business.Calculations.Payroll.Deductions;
+namespace Business.Payroll.Deductions;
 
 internal sealed class HighlyCompensatedEmployeeDeductionCalculationStep : IDeductionCalculationStep
 {
     private const decimal HIGHLY_COMPENSATED_EMPLOYEE_SALARY_THRESHOLD = 80000;
     private const decimal SALARY_PERCENTAGE_COST = 0.02m;
 
-    public Task<Check> Process(Check check)
+    public Task<Paycheck> Process(Paycheck check)
     {
         try
         {
@@ -15,7 +15,7 @@ internal sealed class HighlyCompensatedEmployeeDeductionCalculationStep : IDeduc
                     BuildHighlyCompensatedEmployeeDeduction(check.Employee.Salary));
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // log!
             throw;

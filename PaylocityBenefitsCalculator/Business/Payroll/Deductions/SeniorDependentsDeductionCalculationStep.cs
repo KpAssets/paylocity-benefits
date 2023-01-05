@@ -1,12 +1,12 @@
 using Business.Dependents;
 
-namespace Business.Calculations.Payroll.Deductions;
+namespace Business.Payroll.Deductions;
 
 internal sealed class SeniorDependentsDeductionCalculationStep : IDeductionCalculationStep
 {
     private const decimal YEARLY_BENEFIT_COST_PER_SENIOR_DEPENDENT = 2400;
 
-    public Task<Check> Process(Check check)
+    public Task<Paycheck> Process(Paycheck check)
     {
         try
         {
@@ -15,7 +15,7 @@ internal sealed class SeniorDependentsDeductionCalculationStep : IDeductionCalcu
                 .Where(DependentIsAtLeastFiftyYearsOldPredicate)
                 .Select(BuildSeniorDependentDeductionForPayPeriod));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // log!
             throw;

@@ -1,9 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Business.Dependents;
-using Business.Calculations;
-using Business.Calculations.Payroll;
-using Business.Calculations.Payroll.Deductions;
-using Business.Calculations.Payroll.Earnings;
+using Business.Payroll;
+using Business.Payroll.Deductions;
+using Business.Payroll.Earnings;
 using Business.Employees;
 
 namespace Business.Extensions;
@@ -13,7 +12,8 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddBusinessServices(this IServiceCollection services) =>
         services
             .AddDependentServices()
-            .AddEmployeeServices();
+            .AddEmployeeServices()
+            .AddPayrollServices();
 
     private static IServiceCollection AddEmployeeServices(this IServiceCollection services) =>
         services
@@ -24,12 +24,20 @@ public static class IServiceCollectionExtensions
             .AddSingleton<IDependentService, DependentService>()
             .AddSingleton<IDependentValidatorService, DependentValidatorService>();
 
+    private static IServiceCollection AddPayrollServices(this IServiceCollection services) =>
+        services
+            .AddSingleton<IPayrollService, PayrollService>()
+            .AddEarningsServices()
+            .AddDeductionServices();
+
     private static IServiceCollection AddEarningsServices(this IServiceCollection services) =>
         services
+            .AddSingleton<ICalculationStepService<IEarningCalculationStep>, CalculationStepService<IEarningCalculationStep>>()
             .AddSingleton<IEarningCalculationStep, SalaryCalculationStep>();
 
     private static IServiceCollection AddDeductionServices(this IServiceCollection services) =>
         services
+            .AddSingleton<ICalculationStepService<IDeductionCalculationStep>, CalculationStepService<IDeductionCalculationStep>>()
             .AddSingleton<IDeductionCalculationStep, BaseDeductionCalculationStep>()
             .AddSingleton<IDeductionCalculationStep, DependentDeductionCalculationStep>()
             .AddSingleton<IDeductionCalculationStep, HighlyCompensatedEmployeeDeductionCalculationStep>()
