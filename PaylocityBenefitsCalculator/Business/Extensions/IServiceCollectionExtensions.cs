@@ -17,5 +17,6 @@ public static class IServiceCollectionExtensions
 
     private static IServiceCollection AddDependentServices(this IServiceCollection services) =>
         services
-            .AddSingleton<IDependentService, DependentService>();
+            .AddSingleton<IDependentService, DependentService>()
+            .AddSingleton<IDependentValidatorService, DependentValidatorService>();
 }

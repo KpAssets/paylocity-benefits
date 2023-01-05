@@ -33,8 +33,10 @@ namespace Api.Controllers
         {
             ValidateDependentId(id);
 
-            return Ok(
-                _mapper.Map<GetDependentDto>(await _dependentService.GetAsync(id)));
+            return Ok(new ApiResponse<GetDependentDto>
+            {
+                Data = _mapper.Map<GetDependentDto>(await _dependentService.GetAsync(id))
+            });
         }
 
         [
@@ -43,7 +45,10 @@ namespace Api.Controllers
         ]
         public async Task<ActionResult<ApiResponse<List<GetDependentDto>>>> GetAll()
         {
-            return Ok(_mapper.Map<List<GetDependentDto>>(await _dependentService.GetAsync()));
+            return Ok(new ApiResponse<List<GetDependentDto>>
+            {
+                Data = _mapper.Map<List<GetDependentDto>>(await _dependentService.GetAsync())
+            });
         }
 
         [

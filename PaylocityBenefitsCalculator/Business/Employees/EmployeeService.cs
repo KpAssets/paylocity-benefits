@@ -1,12 +1,18 @@
+using Business.Dependents;
+
 namespace Business.Employees;
 
 internal sealed class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _repo;
+    private readonly IDependentValidatorService _dependentValidator;
 
-    public EmployeeService(IEmployeeRepository repo)
+    public EmployeeService(
+        IEmployeeRepository repo,
+        IDependentValidatorService dependentValidator)
     {
         _repo = repo;
+        _dependentValidator = dependentValidator;
     }
 
     public async Task<Employee> DeleteAsync(uint id)
@@ -20,5 +26,9 @@ internal sealed class EmployeeService : IEmployeeService
 
     public Task<IEnumerable<Employee>> GetAsync() => _repo.GetAsync();
 
-    public Task<Employee> UpsertAsync(Employee employee) => _repo.UpsertAsync(employee);
+    public Task<Employee> UpsertAsync(Employee employee)
+    {
+        _dependentValidator.ValidateDependents(employee.Dependents);
+        return _repo.UpsertAsync(employee);
+    }
 }

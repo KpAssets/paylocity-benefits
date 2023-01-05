@@ -5,7 +5,7 @@ namespace Api.Models.Dependents;
 
 public class AddDependentDto : PersonDto
 {
-    public string Relationship { get; set; } = "none";
+    public string Relationship { get; set; }
 
     protected override void GatherInvalidReasons()
     {
