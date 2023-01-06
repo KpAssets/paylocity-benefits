@@ -27,6 +27,11 @@ internal sealed class PayrollService : IPayrollService
         await _earningsService.Process(check);
         await _deductionsService.Process(check);
 
+        check.NetPay = CalculateNetPay(check);
+
         return check;
     }
+
+    private decimal CalculateNetPay(Paycheck check) =>
+        check.Earnings.Sum(x => x.Amount) - check.Deductions.Sum(x => x.Amount);
 }

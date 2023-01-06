@@ -25,7 +25,7 @@ internal sealed class SeniorDependentsDeductionCalculationStep : IDeductionCalcu
     }
 
     private bool DependentIsAtLeastFiftyYearsOldPredicate(Dependent dependent) =>
-        (DateTime.Now.Year - dependent.DateOfBirth.Year) >= 50;
+        AgeInYears(dependent.DateOfBirth) >= 50;
 
     private Deduction BuildSeniorDependentDeductionForPayPeriod(Dependent dependent) =>
         new Deduction
@@ -33,4 +33,13 @@ internal sealed class SeniorDependentsDeductionCalculationStep : IDeductionCalcu
             Amount = YEARLY_BENEFIT_COST_PER_SENIOR_DEPENDENT / 26,
             Description = $"Senior dependent deduction for {dependent.FirstName} {dependent.LastName}"
         };
+
+    private int AgeInYears(DateTime dateOfBirth)
+    {
+        var now = DateTime.Today;
+        int age = now.Year - dateOfBirth.Year;
+        if (dateOfBirth.AddYears(age) > now)
+            age--;
+        return age;
+    }
 }

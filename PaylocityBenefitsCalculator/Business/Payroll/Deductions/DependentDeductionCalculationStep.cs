@@ -30,7 +30,7 @@ internal sealed class DependentDeductionCalculationStep : IDeductionCalculationS
     private Deduction BuildDependentDeductionForPayPeriod(Dependent dependent) =>
         new Deduction
         {
-            Amount = 7200 / 26,
+            Amount = YEARLY_BENEFIT_COST_PER_DEPENDENT / 26,
             Description = $"Dependent deduction for {dependent.FirstName} {dependent.LastName}"
         };
 }
