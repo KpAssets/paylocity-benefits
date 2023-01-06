@@ -12,8 +12,9 @@ internal sealed class SeniorDependentsDeductionCalculationStep : IDeductionCalcu
         {
             check.Deductions.AddRange(
                 check.Employee.Dependents
-                .Where(DependentIsAtLeastFiftyYearsOldPredicate)
-                .Select(BuildSeniorDependentDeductionForPayPeriod));
+                    ?.Where(DependentIsAtLeastFiftyYearsOldPredicate)
+                    .Select(BuildSeniorDependentDeductionForPayPeriod)
+                ?? new List<Deduction>());
         }
         catch (Exception)
         {

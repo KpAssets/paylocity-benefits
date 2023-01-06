@@ -10,7 +10,7 @@ internal sealed class DependentDeductionCalculationStep : IDeductionCalculationS
     {
         try
         {
-            if (check.Employee.Dependents.Any(x => x != null))
+            if (check.Employee.Dependents?.Any(x => x != null) ?? false)
             {
                 check.Deductions.AddRange(
                     check.Employee.Dependents
