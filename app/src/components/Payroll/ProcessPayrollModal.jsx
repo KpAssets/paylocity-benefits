@@ -36,11 +36,16 @@ const ProcessPayrollModal = (props) => {
         processPayrollForEmployee(props.employee.id);
     };
 
+    const onClose = () => {
+        props.onClose();
+        setPayroll(initialPayrollState);
+    }
+
     return (
         <Modal
             isOpen={props.isOpen}
-            onClose={props.onClose}
-            title={props?.title || "Process Employee's payroll?"}
+            onClose={onClose}
+            title={props?.title || `Process ${props.employee.firstName}'s payroll?`}
             submitButtonName={props?.submitButtonName || "Process Payroll"}
             onSubmit={onSubmit}
             canSubmit={canSubmit}
