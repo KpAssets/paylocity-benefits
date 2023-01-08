@@ -1,12 +1,13 @@
 import { handleApiResponse } from './utils';
 
+const employeesUrl = 'api/v1/employees'
 /**
  * @param {string} baseUrl
  * @param {fetch} fetchImpl
  * @returns 
  */
 export const makeGetEmployees = (baseUrl, fetchImpl) =>
-    handleApiResponse(fetchImpl(`${baseUrl}/api/v1/Employees`));
+    handleApiResponse(fetchImpl(`${baseUrl}/${employeesUrl}`));
 
 /**
  * @param {string} baseUrl
@@ -20,7 +21,7 @@ export const makeDeleteEmployee = (baseUrl, fetchImpl) =>
      * @returns
      */
     (employeeId) =>
-        handleApiResponse(fetchImpl(`${baseUrl}/api/v1/Employees/${employeeId}`, { mode: 'cors', method: 'DELETE' }));
+        handleApiResponse(fetchImpl(`${baseUrl}/${employeesUrl}/${employeeId}`, { mode: 'cors', method: 'DELETE' }));
 
 /**
  * @param {string} baseUrl
@@ -35,7 +36,7 @@ export const makeAddEmployee = (baseUrl, fetchImpl) =>
     (employee) =>
         handleApiResponse(
             fetchImpl(
-                `${baseUrl}/api/v1/Employees`,
+                `${baseUrl}/${employeesUrl}`,
                 {
                     mode: 'cors',
                     method: 'POST',
@@ -58,7 +59,7 @@ export const makeUpdateEmployee = (baseUrl, fetchImpl) =>
     (employee) =>
         handleApiResponse(
             fetchImpl(
-                `${baseUrl}/api/v1/Employees/${employee.id}`,
+                `${baseUrl}/${employeesUrl}/${employee.id}`,
                 {
                     mode: 'cors',
                     method: 'PUT',

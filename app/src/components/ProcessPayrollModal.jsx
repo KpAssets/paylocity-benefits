@@ -1,14 +1,12 @@
 import { useState } from "react";
 import Modal from "./Modal";
-import { useAddEmployee } from '../hooks/addEmployee';
-import { useUpdateEmployee } from '../hooks/updateEmployee';
-import EmployeeForm from "./EmployeeForm";
+import { useProcessPayrollForEmployee } from "../hooks/processPayroll";
 
 /**
  * @param {{id: string, title: string, submitButtonName: string, onSubmit: () => {}, employee: object}} props
  * @returns
  */
-const UpsertEmployeeModal = (props) => {
+const ProcessPayrollModal = (props) => {
     const [canSubmit, setCanSubmit] = useState(true);
 
     const withResp = (data) => {
@@ -22,32 +20,25 @@ const UpsertEmployeeModal = (props) => {
         setCanSubmit(true);
     };
 
-    const addEmployee = useAddEmployee(withResp, withError);
-    const updateEmployee = useUpdateEmployee(withResp, withError);
+    const processPayrollForEmployee = useProcessPayrollForEmployee(withResp, withError);
 
     const onSubmit = () => {
         setCanSubmit(false);
-
-        if (!props.employee.id)
-            addEmployee(props.employee);
-        else
-            updateEmployee(props.employee);
+        processPayrollForEmployee(props.employee.id);
     };
 
     return (
         <Modal
             id={props.id}
             title={props.title}
-            submitButtonName={props?.submitButtonName || "Submit"}
+            submitButtonName={props?.submitButtonName || "Delete"}
             onSubmit={onSubmit}
             canSubmit={canSubmit}
             children={
-                <EmployeeForm
-                    employee={props.employee}
-                    setSelectedEmployee={props.setSelectedEmployee}
-                />}
+                <div>
+                </div>}
         />
     );
 };
 
-export default UpsertEmployeeModal;
+export default ProcessPayrollModal;

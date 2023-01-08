@@ -12,15 +12,18 @@ const DeleteEmployeeModal = (props) => {
     const withResp = (data) => {
         console.log(data);
         props.onSubmit();
+        setCanSubmit(true);
     };
 
     const withError = (message) => {
         console.error(message);
+        setCanSubmit(true);
     };
 
     const deleteEmployee = useDeleteEmployee(withResp, withError);
 
     const onSubmit = () => {
+        setCanSubmit(false);
         deleteEmployee(props.employee.id);
     };
 

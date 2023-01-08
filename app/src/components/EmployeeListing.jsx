@@ -3,6 +3,7 @@ import Employee from './Employee';
 import { useGetEmployees } from '../hooks/getEmployees';
 import UpsertEmployeeModal from './UpsertEmployeeModal';
 import DeleteEmployeeModal from './DeleteEmployeeModal';
+import ProcessPayrollModal from './ProcessPayrollModal';
 
 const initialEmployeeState = {
     id: 0,
@@ -33,6 +34,7 @@ const EmployeeListing = () => {
 
     const upsertEmployeeModalId = "upsert-employee-modal";
     const deleteEmployeeModalId = "delete-employee-modal";
+    const processEmployeeModalId = "process-employee-modal";
 
     return (
         <div className="employee-listing">
@@ -60,6 +62,7 @@ const EmployeeListing = () => {
                             onClick={setSelectedEmployee}
                             editModalId={upsertEmployeeModalId}
                             deleteModalId={deleteEmployeeModalId}
+                            payrollModalId={processEmployeeModalId}
                         />
                     ))}
                 </tbody>
@@ -75,6 +78,13 @@ const EmployeeListing = () => {
             <DeleteEmployeeModal
                 id={deleteEmployeeModalId}
                 title='Delete Employee?'
+                employee={selectedEmployee}
+                setSelectedEmployee={setSelectedEmployee}
+                onSubmit={() => { setDep(dep + 1) }}
+            />
+            <ProcessPayrollModal
+                id={processEmployeeModalId}
+                title="Process Employee's payroll?"
                 employee={selectedEmployee}
                 setSelectedEmployee={setSelectedEmployee}
                 onSubmit={() => { setDep(dep + 1) }}

@@ -26,10 +26,10 @@ const Employee = (props) => {
                 <div className="btn-group" role="group">
                     <button onClick={onClick} type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target={`#${props.editModalId}`}>Edit</button>
                     <button onClick={onClick} type="button" className="btn btn btn-danger" data-bs-toggle="modal" data-bs-target={`#${props.deleteModalId}`}>Delete</button>
-                    <button onClick={onClick} type="button" className="btn btn-success">Process Payroll</button>
+                    <button onClick={onClick} type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target={`#${props.payrollModalId}`}> Process Payroll</button>
                 </div>
             </td>
-        </tr>
+        </tr >
     );
 };
 
