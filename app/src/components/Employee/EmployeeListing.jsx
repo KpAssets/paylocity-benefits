@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Employee from './Employee/Employee';
-import { useGetEmployees } from '../hooks/getEmployees';
-import UpsertEmployeeModal from './Employee/UpsertEmployeeModal';
-import DeleteEmployeeModal from './Employee/DeleteEmployeeModal';
-import ProcessPayrollModal from './Payroll/ProcessPayrollModal';
+import Employee from './Employee';
+import { useGetEmployees } from '../../hooks/getEmployees';
+import UpsertEmployeeModal from './UpsertEmployeeModal';
+import DeleteEmployeeModal from './DeleteEmployeeModal';
+import ProcessPayrollModal from '../Payroll/ProcessPayrollModal';
 
 const initialEmployeeState = {
     id: 0,

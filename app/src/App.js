@@ -1,4 +1,4 @@
-import EmployeeListing from "./components/EmployeeListing";
+import EmployeeListing from "./components/Employee/EmployeeListing";
 
 const App = () => {
   return (

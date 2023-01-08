@@ -2,7 +2,7 @@ import { useState } from "react";
 import Modal from "../Modal";
 import { useAddEmployee } from '../../hooks/addEmployee';
 import { useUpdateEmployee } from '../../hooks/updateEmployee';
-import EmployeeForm from "../EmployeeForm";
+import EmployeeForm from "./EmployeeForm";
 
 /**
  * @param {{isOpen: boolean, onClose: () => {}, submitButtonName: string, onSubmit: () => {}, employee: object}} props

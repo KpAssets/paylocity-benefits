@@ -15,7 +15,7 @@ const Modal = (props) => {
                 {props.children}
             </BootstrapModal.Body>
             <BootstrapModal.Footer>
-                <Button onClick={props.onClose}>Cancel</Button>
+                <Button onClick={props.onClose} variant="secondary">Cancel</Button>
                 <Button onClick={props.onSubmit}>{props.submitButtonName}</Button>
             </BootstrapModal.Footer>
         </BootstrapModal>
