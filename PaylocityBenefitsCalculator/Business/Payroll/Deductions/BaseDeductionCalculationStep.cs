@@ -1,7 +1,16 @@
+using Microsoft.Extensions.Options;
+
 namespace Business.Payroll.Deductions;
 
 internal sealed class BaseDeductionCalculationStep : IDeductionCalculationStep
 {
+    private readonly Settings _settings;
+
+    public BaseDeductionCalculationStep(IOptions<Settings> settings)
+    {
+        _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
+    }
+
     private const decimal YEARLY_BASE_BENEFIT_COST = 12000;
 
     public Task<Paycheck> Process(Paycheck check)
@@ -22,7 +31,7 @@ internal sealed class BaseDeductionCalculationStep : IDeductionCalculationStep
     private Deduction BuildBaseDeductionForPayPeriod() =>
         new Deduction
         {
-            Amount = YEARLY_BASE_BENEFIT_COST / 26,
+            Amount = _settings.YearlyBaseBenefitCost / _settings.PayPeriods,
             Description = "Base benefits deduction"
         };
 }

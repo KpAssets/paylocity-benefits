@@ -1,9 +1,17 @@
+using Microsoft.Extensions.Options;
 using Business.Dependents;
 
 namespace Business.Payroll.Deductions;
 
 internal sealed class DependentDeductionCalculationStep : IDeductionCalculationStep
 {
+    private readonly Settings _settings;
+
+    public DependentDeductionCalculationStep(IOptions<Settings> settings)
+    {
+        _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
+    }
+
     private const decimal YEARLY_BENEFIT_COST_PER_DEPENDENT = 7200;
 
     public Task<Paycheck> Process(Paycheck check)
@@ -30,7 +38,7 @@ internal sealed class DependentDeductionCalculationStep : IDeductionCalculationS
     private Deduction BuildDependentDeductionForPayPeriod(Dependent dependent) =>
         new Deduction
         {
-            Amount = YEARLY_BENEFIT_COST_PER_DEPENDENT / 26,
+            Amount = _settings.YearlyBenefitCostPerDependent / _settings.PayPeriods,
             Description = $"Dependent deduction for {dependent.FirstName} {dependent.LastName}"
         };
 }

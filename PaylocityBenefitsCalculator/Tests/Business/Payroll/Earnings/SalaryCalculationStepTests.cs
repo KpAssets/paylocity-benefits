@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using Business;
 using Business.Employees;
 using Business.Payroll;
 using Business.Payroll.Earnings;
@@ -23,7 +25,7 @@ public class SalaryCalculationStepTests
     }
 
     private IEarningCalculationStep BuildTestTarget() =>
-        new SalaryCalculationStep();
+        new SalaryCalculationStep(Options.Create(new Settings()));
 
     #region Theories
     private class CanCalculateSalaryEarningTheoryData : TheoryData<Paycheck, Earning>

@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using Business;
 using Business.Employees;
 using Business.Payroll;
 using Business.Payroll.Deductions;
@@ -23,5 +25,5 @@ public class BaseDeductionCalculationStepTests
     }
 
     private IDeductionCalculationStep BuildTestTarget() =>
-        new BaseDeductionCalculationStep();
+        new BaseDeductionCalculationStep(Options.Create(new Settings()));
 }

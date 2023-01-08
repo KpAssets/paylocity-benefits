@@ -1,9 +1,15 @@
+using Microsoft.Extensions.Options;
+
 namespace Business.Payroll.Deductions;
 
 internal sealed class HighlyCompensatedEmployeeDeductionCalculationStep : IDeductionCalculationStep
 {
-    private const decimal HIGHLY_COMPENSATED_EMPLOYEE_SALARY_THRESHOLD = 80000;
-    private const decimal SALARY_PERCENTAGE_COST = 0.02m;
+    private readonly Settings _settings;
+
+    public HighlyCompensatedEmployeeDeductionCalculationStep(IOptions<Settings> settings)
+    {
+        _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
+    }
 
     public Task<Paycheck> Process(Paycheck check)
     {
@@ -25,12 +31,12 @@ internal sealed class HighlyCompensatedEmployeeDeductionCalculationStep : IDeduc
     }
 
     private bool EmployeesSalaryGreaterThanSalaryThreshold(decimal salary) =>
-        salary > HIGHLY_COMPENSATED_EMPLOYEE_SALARY_THRESHOLD;
+        salary > _settings.HighlyCompensatedEmployeeSalaryThreshold;
 
     private Deduction BuildHighlyCompensatedEmployeeDeduction(decimal salary) =>
         new Deduction
         {
-            Amount = (salary * SALARY_PERCENTAGE_COST) / 26,
+            Amount = (salary * _settings.HighlyCompensatedEmployeeDeductionPercentage) / _settings.PayPeriods,
             Description = "Highly compensated employee deduction"
         };
 }

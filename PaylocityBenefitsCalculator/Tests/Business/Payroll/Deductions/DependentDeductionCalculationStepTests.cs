@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using Business;
 using Business.Dependents;
 using Business.Employees;
 using Business.Payroll;
@@ -21,7 +23,7 @@ public class DependentDeductionCalculationStepTests
     }
 
     private IDeductionCalculationStep BuildTestTarget() =>
-        new DependentDeductionCalculationStep();
+        new DependentDeductionCalculationStep(Options.Create(new Settings()));
 
     #region Theories
     private class CanCalculateDeductionsForDependentsTheoryData : TheoryData<Paycheck, IEnumerable<Deduction>>

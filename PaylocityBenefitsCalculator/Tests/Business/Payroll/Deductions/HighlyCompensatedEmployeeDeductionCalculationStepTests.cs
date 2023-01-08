@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using Business;
 using Business.Employees;
 using Business.Payroll;
 using Business.Payroll.Deductions;
@@ -23,7 +25,7 @@ public class HighlyCompensatedEmployeeDeductionCalculationStepTests
     }
 
     private IDeductionCalculationStep BuildTestTarget() =>
-        new HighlyCompensatedEmployeeDeductionCalculationStep();
+        new HighlyCompensatedEmployeeDeductionCalculationStep(Options.Create(new Settings()));
 
     #region Theories
     private class CanCalculateHighlyCompensatedEmployeeDeductionTheoryData : TheoryData<Paycheck, Deduction>
