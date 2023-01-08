@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import Employee from './Employee';
+import Button from 'react-bootstrap/Button';
+import Employee from './Employee/Employee';
 import { useGetEmployees } from '../hooks/getEmployees';
-import UpsertEmployeeModal from './UpsertEmployeeModal';
-import DeleteEmployeeModal from './DeleteEmployeeModal';
-import ProcessPayrollModal from './ProcessPayrollModal';
+import UpsertEmployeeModal from './Employee/UpsertEmployeeModal';
+import DeleteEmployeeModal from './Employee/DeleteEmployeeModal';
+import ProcessPayrollModal from './Payroll/ProcessPayrollModal';
 
 const initialEmployeeState = {
     id: 0,
@@ -16,6 +17,9 @@ const initialEmployeeState = {
 const EmployeeListing = () => {
     const [employees, setEmployees] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState(initialEmployeeState);
+    const [isUpsertModalOpen, setIsUpsertModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isPayrollModalOpen, setIsPayrollModalOpen] = useState(false);
     const [dep, setDep] = useState(0);
     const [error, setError] = useState(null);
 
@@ -29,6 +33,33 @@ const EmployeeListing = () => {
         setEmployees([]);
         setError(message);
     };
+
+    const onClick = (setModalOpen) => (employee) => {
+        setSelectedEmployee(employee);
+        setModalOpen(true);
+    };
+
+    const onSubmit = (setModalOpen) => () => {
+        setDep(dep + 1);
+        setModalOpen(false);
+    };
+
+    const onClose = (setModalOpen) => () => {
+        setModalOpen(false);
+        setSelectedEmployee(initialEmployeeState);
+    };
+
+    const onEditEmployeeClick = onClick(setIsUpsertModalOpen);
+    const onEditEmployeeSubmit = onSubmit(setIsUpsertModalOpen);
+    const onEditEmployeeClose = onClose(setIsUpsertModalOpen);
+
+    const onDeleteEmployeeClick = onClick(setIsDeleteModalOpen);
+    const onDeleteEmployeeSubmit = onSubmit(setIsDeleteModalOpen);
+    const onDeleteEmployeeClose = onClose(setIsDeleteModalOpen);
+
+    const onProcessPayrollClick = onClick(setIsPayrollModalOpen);
+    const onProcessPayrollSubmit = onSubmit(setIsPayrollModalOpen);
+    const onProcessPayrollClose = onClose(setIsPayrollModalOpen);
 
     useGetEmployees(withResp, withError, [dep]);
 
@@ -59,35 +90,34 @@ const EmployeeListing = () => {
                             employee={{
                                 id, firstName, lastName, dateOfBirth, salary, dependents
                             }}
-                            onClick={setSelectedEmployee}
-                            editModalId={upsertEmployeeModalId}
-                            deleteModalId={deleteEmployeeModalId}
-                            payrollModalId={processEmployeeModalId}
+                            onEditClick={onEditEmployeeClick}
+                            onDeleteClick={onDeleteEmployeeClick}
+                            onProcessPayrollClick={onProcessPayrollClick}
                         />
                     ))}
                 </tbody>
             </table>
-            <button type="button" onClick={() => setSelectedEmployee(initialEmployeeState)} className="btn btn-primary" data-bs-toggle="modal" data-bs-target={`#${upsertEmployeeModalId}`}>Add Employee</button>
+            <Button onClick={() => setIsUpsertModalOpen(true)} variant="primary">Add Employee</Button>
             <UpsertEmployeeModal
-                id={upsertEmployeeModalId}
-                title='Add Employee'
+                isOpen={isUpsertModalOpen}
+                onClose={onEditEmployeeClose}
+                onSubmit={onEditEmployeeSubmit}
                 employee={selectedEmployee}
                 setSelectedEmployee={setSelectedEmployee}
-                onSubmit={() => { setDep(dep + 1) }}
             />
             <DeleteEmployeeModal
-                id={deleteEmployeeModalId}
-                title='Delete Employee?'
+                isOpen={isDeleteModalOpen}
+                onClose={onDeleteEmployeeClose}
+                onSubmit={onDeleteEmployeeSubmit}
                 employee={selectedEmployee}
                 setSelectedEmployee={setSelectedEmployee}
-                onSubmit={() => { setDep(dep + 1) }}
             />
             <ProcessPayrollModal
-                id={processEmployeeModalId}
-                title="Process Employee's payroll?"
+                isOpen={isPayrollModalOpen}
+                onClose={onProcessPayrollClose}
+                onSubmit={onProcessPayrollSubmit}
                 employee={selectedEmployee}
                 setSelectedEmployee={setSelectedEmployee}
-                onSubmit={() => { setDep(dep + 1) }}
             />
         </div>
     );

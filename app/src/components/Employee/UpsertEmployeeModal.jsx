@@ -1,11 +1,11 @@
 import { useState } from "react";
-import Modal from "./Modal";
-import { useAddEmployee } from '../hooks/addEmployee';
-import { useUpdateEmployee } from '../hooks/updateEmployee';
-import EmployeeForm from "./EmployeeForm";
+import Modal from "../Modal";
+import { useAddEmployee } from '../../hooks/addEmployee';
+import { useUpdateEmployee } from '../../hooks/updateEmployee';
+import EmployeeForm from "../EmployeeForm";
 
 /**
- * @param {{id: string, title: string, submitButtonName: string, onSubmit: () => {}, employee: object}} props
+ * @param {{isOpen: boolean, onClose: () => {}, submitButtonName: string, onSubmit: () => {}, employee: object}} props
  * @returns
  */
 const UpsertEmployeeModal = (props) => {
@@ -15,11 +15,19 @@ const UpsertEmployeeModal = (props) => {
         console.log(data);
         props.onSubmit();
         setCanSubmit(true);
+        props.onClose();
     };
 
     const withError = (message) => {
         console.error(message);
         setCanSubmit(true);
+        props.onClose();
+    };
+
+    const getTitle = () => {
+        if (!props.employee.id)
+            return 'Add Employee'
+        return 'Edit Employee';
     };
 
     const addEmployee = useAddEmployee(withResp, withError);
@@ -36,17 +44,18 @@ const UpsertEmployeeModal = (props) => {
 
     return (
         <Modal
-            id={props.id}
-            title={props.title}
+            isOpen={props.isOpen}
+            onClose={props.onClose}
+            title={getTitle()}
             submitButtonName={props?.submitButtonName || "Submit"}
             onSubmit={onSubmit}
             canSubmit={canSubmit}
-            children={
-                <EmployeeForm
-                    employee={props.employee}
-                    setSelectedEmployee={props.setSelectedEmployee}
-                />}
-        />
+        >
+            <EmployeeForm
+                employee={props.employee}
+                setSelectedEmployee={props.setSelectedEmployee}
+            />
+        </Modal>
     );
 };
 

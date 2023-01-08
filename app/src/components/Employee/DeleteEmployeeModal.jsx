@@ -1,9 +1,9 @@
 import { useState } from "react";
-import Modal from "./Modal";
-import { useDeleteEmployee } from '../hooks/deleteEmployee';
+import Modal from "../Modal";
+import { useDeleteEmployee } from '../../hooks/deleteEmployee';
 
 /**
- * @param {{id: string, title: string, submitButtonName: string, onSubmit: () => {}, employee: object}} props
+ * @param {{isOpen: boolean, onClose: () => {}, submitButtonName: string, onSubmit: () => {}, employee: object}} props
  * @returns
  */
 const DeleteEmployeeModal = (props) => {
@@ -13,11 +13,13 @@ const DeleteEmployeeModal = (props) => {
         console.log(data);
         props.onSubmit();
         setCanSubmit(true);
+        props.onClose();
     };
 
     const withError = (message) => {
         console.error(message);
         setCanSubmit(true);
+        props.onClose();
     };
 
     const deleteEmployee = useDeleteEmployee(withResp, withError);
@@ -29,16 +31,19 @@ const DeleteEmployeeModal = (props) => {
 
     return (
         <Modal
-            id={props.id}
-            title={props.title}
+            isOpen={props.isOpen}
+            onClose={props.onClose}
+            title={props?.title || "Delete Employee?"}
             submitButtonName={props?.submitButtonName || "Delete"}
             onSubmit={onSubmit}
             canSubmit={canSubmit}
-            children={
-                <div>
+        >
+            <div>
+                <p>
                     Are you sure you want to delete {props.employee.firstName} {props.employee.lastName}?
-                </div>}
-        />
+                </p>
+            </div>
+        </Modal>
     );
 };
 
