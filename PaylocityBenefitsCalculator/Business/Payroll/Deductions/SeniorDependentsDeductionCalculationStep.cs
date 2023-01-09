@@ -32,7 +32,7 @@ internal sealed class SeniorDependentsDeductionCalculationStep : IDeductionCalcu
     }
 
     private bool DependentIsAtLeastFiftyYearsOldPredicate(Dependent dependent) =>
-        AgeInYears(dependent.DateOfBirth) >= 50;
+        AgeInYears(dependent.DateOfBirth) >= _settings.AgeDependentIsConsideredASenior;
 
     private Deduction BuildSeniorDependentDeductionForPayPeriod(Dependent dependent) =>
         new Deduction

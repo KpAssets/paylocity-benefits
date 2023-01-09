@@ -12,8 +12,6 @@ internal sealed class DependentDeductionCalculationStep : IDeductionCalculationS
         _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
     }
 
-    private const decimal YEARLY_BENEFIT_COST_PER_DEPENDENT = 7200;
-
     public Task<Paycheck> Process(Paycheck check)
     {
         try

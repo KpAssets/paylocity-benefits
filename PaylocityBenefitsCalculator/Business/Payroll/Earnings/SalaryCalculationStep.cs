@@ -2,8 +2,7 @@ using Microsoft.Extensions.Options;
 
 namespace Business.Payroll.Earnings;
 
-// SalaryCalculationStep is responsible for generating the Employee's
-// base salary for the pay period
+// SalaryCalculationStep is responsible for generating an Employee's base salary for the pay period
 internal sealed class SalaryCalculationStep : IEarningCalculationStep
 {
     private readonly Settings _settings;

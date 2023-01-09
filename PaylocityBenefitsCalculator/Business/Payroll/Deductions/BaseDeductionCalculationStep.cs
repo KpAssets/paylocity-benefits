@@ -11,8 +11,6 @@ internal sealed class BaseDeductionCalculationStep : IDeductionCalculationStep
         _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
     }
 
-    private const decimal YEARLY_BASE_BENEFIT_COST = 12000;
-
     public Task<Paycheck> Process(Paycheck check)
     {
         try

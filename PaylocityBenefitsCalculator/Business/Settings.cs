@@ -7,5 +7,6 @@ public sealed class Settings
     public decimal YearlyBenefitCostPerDependent { get; set; } = 7200;
     public decimal HighlyCompensatedEmployeeSalaryThreshold { get; set; } = 80000;
     public decimal HighlyCompensatedEmployeeDeductionPercentage { get; set; } = 0.02m;
+    public uint AgeDependentIsConsideredASenior { get; set; } = 50;
     public decimal YearlyBenefitCostPerSeniorDependent { get; set; } = 2400;
 }
