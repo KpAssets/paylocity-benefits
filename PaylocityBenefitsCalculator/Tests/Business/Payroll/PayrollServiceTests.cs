@@ -82,7 +82,83 @@ public class PayrollServiceTests
                     }
                 },
                 50);
+            Add(
+                new Employee { Salary = 92365.22m },
+                new List<Earning>
+                {
+                    new Earning
+                    {
+                        Amount = 3552.51m
+                    }
+                },
+                new List<Deduction>
+                {
+                    new Deduction
+                    {
+                        Amount = 461.54m
+                    },
+                    new Deduction
+                    {
+                        Amount = 276.92m
+                    },
+                    new Deduction
+                    {
+                        Amount = 276.92m
+                    },
+                    new Deduction
+                    {
+                        Amount = 276.92m
+                    },
+                    new Deduction
+                    {
+                        Amount = 71.05m
+                    }
+                },
+                2189.16m);
+            Add(
+                new Employee { Salary = 75420.99m },
+                new List<Earning>
+                {
+                    new Earning
+                    {
+                        Amount = 2900.81m
+                    }
+                },
+                new List<Deduction>
+                {
+                    new Deduction
+                    {
+                        Amount = 461.54m
+                    }
+                },
+                2439.27m);
+            Add(
+                new Employee { Salary = 143211.12m },
+                new List<Earning>
+                {
+                    new Earning
+                    {
+                        Amount = 5508.12m
+                    }
+                },
+                new List<Deduction>
+                {
+                    new Deduction
+                    {
+                        Amount = 461.54m
+                    },
+                    new Deduction
+                    {
+                        Amount = 276.92m
+                    },
+                    new Deduction
+                    {
+                        Amount = 110.16m
+                    }
+                },
+                4659.50m);
         }
+
     }
     #endregion Theories
 }
